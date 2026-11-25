@@ -1,0 +1,2111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182920">
+<title>NOIR — Finanzas, Estudio & Reventa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest-deep:#182920;
+  --forest:#274233;
+  --olive:#5D654C;
+  --walnut:#684B38;
+  --cream:#F3EEE6;
+  --bronze:#B78A53;
+  --bronze-bright:#CFA46E;
+
+  --bg:#16251D;
+  --panel:#223A2D;
+  --panel-elevated:#274233;
+  --border:rgba(243,238,230,.12);
+  --border-bronze:rgba(183,138,83,.45);
+  --text:#F3EEE6;
+  --muted:#C8C3B8;
+  --green:#8FD4A4;
+  --green-bg:rgba(143,212,164,.14);
+  --red:#E8958B;
+  --red-bg:rgba(232,149,139,.15);
+  --blue:#A4C9E8;
+  --r:20px;
+  --r-sm:13px;
+  --shadow:0 18px 42px rgba(10,18,14,.48);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;
+  background:
+    radial-gradient(950px 440px at 50% -110px, rgba(183,138,83,.16), transparent 65%),
+    radial-gradient(700px 380px at 92% 12%, rgba(93,101,76,.22), transparent 60%),
+    linear-gradient(180deg, #1A2D23 0%, #15241C 100%);
+  color:var(--text);
+  font:400 14.5px/1.55 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding-bottom:104px;
+  min-height:100vh;
+}
+
+.num, .value, input[type="number"], #basicDisplay, #floatDisplay, .calc-hist-res{
+  font-variant-numeric:tabular-nums;
+}
+
+button,input,select,textarea{font:inherit}
+button{
+  cursor:pointer;
+  border:1px solid transparent;
+  border-radius:var(--r-sm);
+  padding:10px 15px;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:all .18s cubic-bezier(.2,.8,.2,1);
+}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--bronze);
+  outline-offset:2px;
+}
+
+/* Header & Navigation */
+header{
+  max-width:1200px;
+  margin:0 auto;
+  padding:26px 22px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+.brand-wrap{display:flex;flex-direction:column;gap:3px}
+.brand{
+  font:700 30px/1 'Playfair Display',Georgia,serif;
+  letter-spacing:4.5px;
+  color:var(--cream);
+  display:flex;
+  align-items:center;
+  gap:2px;
+}
+.brand span{color:var(--bronze)}
+.sub{font-size:12px;color:var(--muted);letter-spacing:.03em}
+.head-actions,.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+main{max-width:1200px;margin:0 auto;padding:0 22px}
+
+.tabs-wrap{
+  position:sticky;
+  top:0;
+  z-index:15;
+  padding:8px 0 16px;
+  background:linear-gradient(180deg, rgba(24,41,32,.96) 72%, rgba(24,41,32,0));
+}
+.tabs{
+  display:inline-flex;
+  gap:4px;
+  max-width:100%;
+  overflow-x:auto;
+  padding:5px;
+  background:rgba(39,66,51,.88);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border-bronze);
+  border-radius:999px;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  white-space:nowrap;
+  background:transparent;
+  color:var(--muted);
+  padding:8px 15px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:500;
+}
+.tabs button:hover{color:var(--cream);background:rgba(93,101,76,.35)}
+.tabs button.active{
+  color:#19231C;
+  font-weight:700;
+  background:linear-gradient(135deg, var(--bronze-bright), var(--bronze));
+  box-shadow:0 4px 16px rgba(183,138,83,.32);
+}
+
+.page{display:none;animation:fadeSlide .24s ease}
+.page.active{display:block}
+@keyframes fadeSlide{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Grids & Cards */
+.grid{display:grid;gap:14px}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.two{grid-template-columns:1.1fr .9fr}
+.two-eq{grid-template-columns:1fr 1fr}
+.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+.card{
+  background:linear-gradient(160deg, rgba(39,66,51,.95), rgba(31,53,41,.97));
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:20px;
+  min-width:0;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(243,238,230,.18), transparent);
+  pointer-events:none;
+}
+.hero{
+  background:
+    radial-gradient(340px 180px at 100% 0%, rgba(183,138,83,.28), transparent 70%),
+    linear-gradient(145deg, var(--walnut), #463225 75%);
+  border-color:var(--border-bronze);
+}
+
+.label{
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+  font-weight:600;
+}
+.value{
+  font-size:clamp(22px,3.2vw,30px);
+  font-weight:700;
+  letter-spacing:-.02em;
+  margin-top:8px;
+  color:var(--cream);
+  overflow-wrap:anywhere;
+}
+.positive{color:var(--green)}
+.negative{color:var(--red)}
+.gold{color:var(--bronze-bright)}
+.blue{color:var(--blue)}
+.muted{color:var(--muted)}
+
+.sectionhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:26px 0 13px;
+}
+.sectionhead h2{
+  font:600 19px/1.2 'Playfair Display',Georgia,serif;
+  letter-spacing:.02em;
+  margin:0;
+  color:var(--cream);
+}
+.sectionhead h3{font-size:15.5px;font-weight:600;margin:0;color:var(--cream)}
+
+/* Buttons & Pills */
+.primary{
+  background:linear-gradient(135deg, var(--bronze-bright), var(--bronze));
+  color:#19231C;
+  font-weight:700;
+  box-shadow:0 6px 20px rgba(183,138,83,.28);
+}
+.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.ghost{
+  background:rgba(93,101,76,.32);
+  color:var(--cream);
+  border-color:rgba(243,238,230,.16);
+}
+.ghost:hover{background:rgba(93,101,76,.52);border-color:var(--border-bronze)}
+.danger{
+  background:var(--red-bg);
+  color:var(--red);
+  border-color:rgba(232,149,139,.32);
+}
+.danger:hover{background:rgba(232,149,139,.24)}
+.success-btn{
+  background:var(--green-bg);
+  color:var(--green);
+  border-color:rgba(143,212,164,.32);
+}
+.success-btn:hover{background:rgba(143,212,164,.24)}
+.small{padding:7px 11px;font-size:12px;border-radius:10px}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.03em;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(104,75,56,.45);
+  border:1px solid var(--border-bronze);
+  color:var(--cream);
+  white-space:nowrap;
+}
+.pill.green{background:var(--green-bg);border-color:rgba(143,212,164,.32);color:var(--green)}
+.pill.red{background:var(--red-bg);border-color:rgba(232,149,139,.32);color:var(--red)}
+.pill.olive{background:rgba(93,101,76,.48);border-color:rgba(243,238,230,.2);color:var(--cream)}
+
+/* Forms */
+input,select,textarea{
+  width:100%;
+  background:var(--forest-deep);
+  color:var(--cream);
+  border:1px solid rgba(243,238,230,.15);
+  border-radius:12px;
+  padding:11px 13px;
+  outline:none;
+  min-width:0;
+  transition:border-color .16s, box-shadow .16s;
+}
+input::placeholder,textarea::placeholder{color:rgba(243,238,230,.42)}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--bronze);
+  box-shadow:0 0 0 3px rgba(183,138,83,.18);
+}
+textarea{resize:vertical}
+label{display:block;color:var(--muted);font-size:12px;font-weight:500;margin:0 0 6px}
+.field{margin-bottom:12px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.formgrid .full{grid-column:1/-1}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+.row:last-child{border:0;padding-bottom:2px}
+.row:first-child{padding-top:2px}
+.empty{text-align:center;padding:28px 10px;color:var(--muted);font-size:13.5px}
+
+.notice{
+  border:1px solid var(--border-bronze);
+  background:rgba(104,75,56,.34);
+  color:var(--cream);
+  border-radius:14px;
+  padding:13px 15px;
+  font-size:13px;
+  line-height:1.5;
+}
+.bar{
+  height:7px;
+  background:rgba(24,41,32,.85);
+  border:1px solid rgba(243,238,230,.08);
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:9px;
+}
+.bar i{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg, var(--walnut), var(--bronze-bright));
+  border-radius:999px;
+  transition:width .35s ease;
+}
+.progressline{margin:14px 0}
+.metric-note{font-size:11.5px;color:var(--muted);margin-top:5px}
+
+/* Bottom Bar & Floating Calculator */
+.bottom{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(24,41,32,.9);
+  backdrop-filter:blur(18px);
+  border-top:1px solid var(--border-bronze);
+  padding:10px 18px calc(10px + env(safe-area-inset-bottom));
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  z-index:20;
+}
+.bottom .main-cta{
+  width:min(1040px,100%);
+  background:linear-gradient(135deg, var(--bronze-bright), var(--bronze));
+  color:#19231C;
+  box-shadow:0 6px 24px rgba(10,18,14,.5);
+}
+.fab-calc{
+  position:fixed;
+  right:20px;
+  bottom:calc(68px + env(safe-area-inset-bottom));
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  padding:0;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg, var(--walnut), #483326);
+  border:1px solid var(--bronze-bright);
+  color:var(--cream);
+  box-shadow:0 12px 30px rgba(10,18,14,.68);
+  z-index:25;
+}
+.fab-calc:hover{transform:translateY(-2px) scale(1.04);filter:brightness(1.08)}
+
+/* Calculator Keypad Styling */
+.calc-screen{
+  background:var(--forest-deep);
+  border:1px solid var(--border-bronze);
+  border-radius:15px;
+  padding:12px 14px;
+  margin-bottom:12px;
+}
+.calc-expr-sub{
+  min-height:18px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:right;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.calc-input{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:2px 0 0 !important;
+  text-align:right;
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:.5px;
+  color:var(--cream);
+}
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.calc-grid button{
+  padding:13px 8px;
+  font-size:16px;
+  border-radius:13px;
+  background:rgba(93,101,76,.32);
+  border:1px solid var(--border);
+  color:var(--cream);
+}
+.calc-grid button:hover{background:rgba(93,101,76,.55)}
+.calc-grid button.op{
+  color:var(--cream);
+  background:rgba(104,75,56,.62);
+  border-color:var(--border-bronze);
+}
+.calc-grid button.fn{
+  color:var(--muted);
+  background:rgba(24,41,32,.7);
+  font-size:14px;
+}
+.calc-grid button.eq{
+  background:linear-gradient(135deg, var(--bronze-bright), var(--bronze));
+  color:#19231C;
+  font-weight:700;
+  border:none;
+}
+.calc-history{
+  margin-top:12px;
+  max-height:135px;
+  overflow-y:auto;
+  border-top:1px solid var(--border);
+  padding-top:8px;
+}
+.calc-hist-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 8px;
+  border-radius:8px;
+  font-size:12.5px;
+  cursor:pointer;
+}
+.calc-hist-item:hover{background:rgba(93,101,76,.3)}
+
+/* Pomodoro Styling */
+.pomo-ring{
+  text-align:center;
+  padding:18px 12px;
+  border-radius:18px;
+  background:radial-gradient(circle at 50% 0%, rgba(183,138,83,.22), rgba(24,41,32,.9));
+  border:1px solid var(--border-bronze);
+  margin:10px 0 14px;
+}
+.pomo-time{
+  font-size:clamp(38px,6vw,52px);
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--cream);
+  font-variant-numeric:tabular-nums;
+  line-height:1.1;
+}
+
+/* Dialogs */
+dialog{
+  background:var(--forest);
+  color:var(--cream);
+  border:1px solid var(--border-bronze);
+  border-radius:22px;
+  width:min(460px,calc(100% - 26px));
+  padding:22px;
+  box-shadow:0 28px 80px rgba(10,18,14,.85);
+}
+dialog::backdrop{background:rgba(15,26,20,.78);backdrop-filter:blur(6px)}
+.close{float:right}
+.task{border-left:3px solid var(--bronze);padding-left:13px}
+.task.overdue{border-color:var(--red)}
+.task.done{opacity:.52}
+
+@media(max-width:820px){
+  header{padding:20px 16px 12px}
+  main{padding:0 15px}
+  .stats{grid-template-columns:1fr 1fr}
+  .two,.two-eq{grid-template-columns:1fr}
+  .three{grid-template-columns:1fr 1fr}
+  .card{padding:16px}
+}
+@media(max-width:440px){
+  .three,.formgrid{grid-template-columns:1fr}
+  .formgrid .full{grid-column:auto}
+  .brand{font-size:25px;letter-spacing:3.5px}
+  .fab-calc{right:14px;bottom:calc(66px + env(safe-area-inset-bottom));width:48px;height:48px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-wrap">
+    <div class="brand">NOIR<span>.</span></div>
+    <div class="sub">Forest Reserve Edition · Patrimonio, Reventa &amp; Estudio</div>
+  </div>
+  <div class="head-actions">
+    <button class="ghost small" id="importTop" title="Restaurar respaldo JSON">↑ Importar</button>
+    <button class="primary small" id="backupTop" title="Descargar respaldo JSON">↓ Respaldo</button>
+    <input type="file" id="importTopFile" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<main>
+  <div class="tabs-wrap">
+    <nav class="tabs" aria-label="Navegación principal">
+      <button class="active" data-tab="inicio">Inicio</button>
+      <button data-tab="movimientos">Finanzas</button>
+      <button data-tab="ventas">Ventas &amp; Fiados</button>
+      <button data-tab="inventario">Inventario</button>
+      <button data-tab="estudio">Estudio</button>
+      <button data-tab="metas">Metas</button>
+      <button data-tab="herramientas">Herramientas</button>
+      <button data-tab="analisis">Análisis</button>
+    </nav>
+  </div>
+
+  <!-- INICIO -->
+  <section class="page active" id="inicio">
+    <div class="grid stats">
+      <div class="card hero">
+        <div class="label">Balance disponible</div>
+        <div class="value" id="balance">$0.00</div>
+        <div class="metric-note">Liquidez neta acumulada</div>
+      </div>
+      <div class="card">
+        <div class="label">Ingresos del mes</div>
+        <div class="value positive" id="income">$0.00</div>
+        <div class="metric-note">Entradas registradas</div>
+      </div>
+      <div class="card">
+        <div class="label">Gastos del mes</div>
+        <div class="value negative" id="expense">$0.00</div>
+        <div class="metric-note">Salidas registradas</div>
+      </div>
+      <div class="card">
+        <div class="label">Utilidad de reventa (mes)</div>
+        <div class="value gold" id="profitMonth">$0.00</div>
+        <div class="metric-note">Ganancia neta sobre costo</div>
+      </div>
+    </div>
+
+    <div class="sectionhead">
+      <h2>Resumen ejecutivo</h2>
+      <span class="pill" id="monthLabel"></span>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div class="sectionhead" style="margin:0 0 10px">
+          <h3>Movimientos recientes</h3>
+          <button class="ghost small" data-go="movimientos">Historial completo</button>
+        </div>
+        <div id="recent"></div>
+      </div>
+      <div class="card">
+        <div class="sectionhead" style="margin:0 0 10px">
+          <h3>Agenda académica</h3>
+          <button class="ghost small" data-go="estudio">Ir a estudio</button>
+        </div>
+        <div id="upcoming"></div>
+        <div class="notice" style="margin-top:14px">
+          ✦ Mantén separado tu capital de reinversión de tus gastos escolares y personales.
+        </div>
+      </div>
+    </div>
+
+    <div class="sectionhead">
+      <h2>Pulso de reventa &amp; cartera</h2>
+      <button class="ghost small" data-go="ventas">＋ Nueva venta</button>
+    </div>
+
+    <div class="grid stats">
+      <div class="card">
+        <div class="label">Ventas este mes</div>
+        <div class="value" id="salesCount">0</div>
+        <div class="metric-note">Operaciones cerradas</div>
+      </div>
+      <div class="card">
+        <div class="label">Unidades en stock</div>
+        <div class="value" id="stockCount">0</div>
+        <div class="metric-note">Piezas listas para venta</div>
+      </div>
+      <div class="card">
+        <div class="label">Capital invertido</div>
+        <div class="value gold" id="stockValue">$0.00</div>
+        <div class="metric-note">Ganancia potencial: <b class="positive" id="stockPotential">$0.00</b></div>
+      </div>
+      <div class="card">
+        <div class="label">Por cobrar (Fiados)</div>
+        <div class="value blue" id="receivableTotal">$0.00</div>
+        <div class="metric-note"><span id="receivableCount">0</span> cuentas pendientes</div>
+      </div>
+    </div>
+
+    <div class="sectionhead"><h2>Acciones rápidas</h2></div>
+    <div class="actions">
+      <button class="primary" data-go="ventas">＋ Registrar venta</button>
+      <button class="ghost" data-go="estudio">＋ Tarea / Pomodoro</button>
+      <button class="ghost" data-go="movimientos">＋ Movimiento</button>
+      <button class="ghost" id="openCalcQuick">⌨ Calculadora rápida</button>
+    </div>
+  </section>
+
+  <!-- FINANZAS -->
+  <section class="page" id="movimientos">
+    <div class="sectionhead"><h2>Registrar ingreso o gasto</h2></div>
+    <div class="card">
+      <form id="txForm">
+        <div class="formgrid">
+          <div class="field">
+            <label>Tipo de movimiento</label>
+            <select id="txType">
+              <option value="income">Ingreso (+)</option>
+              <option value="expense">Gasto (−)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Importe (MXN)</label>
+            <input id="txAmount" type="number" min=".01" step=".01" placeholder="0.00" required>
+          </div>
+          <div class="field">
+            <label>Concepto</label>
+            <input id="txTitle" maxlength="70" placeholder="Ej. Pasajes, copias, beca, comida..." required>
+          </div>
+          <div class="field">
+            <label>Categoría</label>
+            <select id="txCategory">
+              <option>Personal</option>
+              <option>Escuela</option>
+              <option>Comida</option>
+              <option>Transporte</option>
+              <option>Ventas</option>
+              <option>Reventa / Inversión</option>
+              <option>Materiales</option>
+              <option>Entretenimiento</option>
+              <option>Ahorro</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Fecha</label>
+            <input id="txDate" type="date" required>
+          </div>
+          <div class="field">
+            <label>Método de pago</label>
+            <select id="txPay">
+              <option>Efectivo</option>
+              <option>Transferencia</option>
+              <option>Tarjeta</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Nota (opcional)</label>
+            <input id="txNote" maxlength="120" placeholder="Detalles adicionales">
+          </div>
+        </div>
+        <button class="primary">＋ Guardar movimiento</button>
+      </form>
+    </div>
+
+    <div class="sectionhead">
+      <h2>Historial de movimientos</h2>
+      <div class="actions">
+        <input id="txSearch" placeholder="Buscar..." style="width:140px;padding:8px 11px">
+        <select id="filterType" style="width:auto;padding:8px 11px">
+          <option value="all">Todos</option>
+          <option value="income">Ingresos</option>
+          <option value="expense">Gastos</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" id="txList"></div>
+  </section>
+
+  <!-- VENTAS Y FIADOS -->
+  <section class="page" id="ventas">
+    <div class="grid two-eq">
+      <div>
+        <div class="sectionhead" style="margin-top:0">
+          <h2>Registrar venta</h2>
+          <span class="pill">Descuenta stock</span>
+        </div>
+        <div class="card">
+          <form id="saleForm">
+            <div class="formgrid">
+              <div class="field full">
+                <label>Producto</label>
+                <select id="saleProduct" required></select>
+              </div>
+              <div class="field">
+                <label>Cantidad</label>
+                <input id="saleQty" type="number" min="1" step="1" value="1" required>
+              </div>
+              <div class="field">
+                <label>Precio unitario (MXN)</label>
+                <input id="salePrice" type="number" min="0" step=".01" required>
+              </div>
+              <div class="field">
+                <label>Fecha</label>
+                <input id="saleDate" type="date" required>
+              </div>
+              <div class="field">
+                <label>Forma de pago</label>
+                <select id="salePay">
+                  <option>Efectivo</option>
+                  <option>Transferencia</option>
+                  <option>Tarjeta</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label>Cliente (opcional)</label>
+                <input id="saleCustomer" maxlength="60" placeholder="Nombre o grupo">
+              </div>
+            </div>
+            <div class="notice" id="salePreview">Selecciona un producto para calcular la ganancia neta.</div>
+            <button class="primary" style="margin-top:13px;width:100%">✓ Confirmar venta al contado</button>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <div class="sectionhead" style="margin-top:0">
+          <h2>Apartados / Cuentas por cobrar</h2>
+          <span class="pill olive" id="recBadge">$0.00</span>
+        </div>
+        <div class="card">
+          <form id="recForm">
+            <div class="formgrid">
+              <div class="field">
+                <label>Cliente / Compañero</label>
+                <input id="recClient" maxlength="60" placeholder="Ej. Carlos (2°B)" required>
+              </div>
+              <div class="field">
+                <label>Producto o concepto</label>
+                <input id="recConcept" maxlength="70" placeholder="Ej. Audífonos TWS" required>
+              </div>
+              <div class="field">
+                <label>Monto total ($)</label>
+                <input id="recTotal" type="number" min=".01" step=".01" placeholder="0.00" required>
+              </div>
+              <div class="field">
+                <label>Anticipo recibido ($)</label>
+                <input id="recPaid" type="number" min="0" step=".01" value="0">
+              </div>
+            </div>
+            <button class="ghost" style="width:100%">＋ Registrar apartado / fiado</button>
+          </form>
+          <div id="recList" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sectionhead"><h2>Historial de ventas</h2></div>
+    <div class="card" id="salesList"></div>
+  </section>
+
+  <!-- INVENTARIO -->
+  <section class="page" id="inventario">
+    <div class="grid stats" style="margin-bottom:6px">
+      <div class="card">
+        <div class="label">Capital en mercancía</div>
+        <div class="value gold" id="invCapital">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="label">Valor venta total</div>
+        <div class="value" id="invRetail">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="label">Ganancia potencial</div>
+        <div class="value positive" id="invPotential">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="label">Alertas stock bajo</div>
+        <div class="value negative" id="invLowCount">0</div>
+      </div>
+    </div>
+
+    <div class="sectionhead"><h2>Agregar producto al catálogo</h2></div>
+    <div class="card">
+      <form id="productForm">
+        <div class="formgrid">
+          <div class="field">
+            <label>Nombre del producto</label>
+            <input id="pName" maxlength="60" placeholder="Ej. Cargador tipo C 20W" required>
+          </div>
+          <div class="field">
+            <label>Existencias iniciales</label>
+            <input id="pQty" type="number" min="0" step="1" placeholder="0" required>
+          </div>
+          <div class="field">
+            <label>Costo por unidad (MXN)</label>
+            <input id="pCost" type="number" min="0" step=".01" placeholder="0.00" required>
+          </div>
+          <div class="field">
+            <label>Precio de venta (MXN)</label>
+            <input id="pPrice" type="number" min="0" step=".01" placeholder="0.00" required>
+          </div>
+          <div class="field">
+            <label>Alerta de stock mínimo</label>
+            <input id="pMin" type="number" min="0" step="1" value="2">
+          </div>
+        </div>
+        <button class="primary">＋ Guardar producto</button>
+      </form>
+    </div>
+
+    <div class="sectionhead"><h2>Inventario actual</h2></div>
+    <div class="card" id="productList"></div>
+
+    <div class="sectionhead">
+      <h2>Calculadora avanzada de precios y comisiones</h2>
+      <span class="pill">Reventa Pro</span>
+    </div>
+    <div class="card">
+      <div class="formgrid">
+        <div class="field">
+          <label>Costo del producto ($)</label>
+          <input id="calcCost" type="number" min="0" step=".01" placeholder="Ej. 120">
+        </div>
+        <div class="field">
+          <label>Empaque y envío ($)</label>
+          <input id="calcExtra" type="number" min="0" step=".01" value="0" placeholder="Ej. 15">
+        </div>
+        <div class="field">
+          <label>Comisión de plataforma (%)</label>
+          <select id="calcFee">
+            <option value="0">0% — Venta directa / Escuela / Efectivo</option>
+            <option value="3.5">3.5% — Terminal / Cobro con tarjeta</option>
+            <option value="5">5% — Marketplace / Envío local</option>
+            <option value="14">14% — Mercado Libre Clásica</option>
+            <option value="18.5">18.5% — Mercado Libre Premium</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ganancia neta deseada (%)</label>
+          <input id="calcMargin" type="number" min="0" step=".5" value="35">
+        </div>
+      </div>
+      <div class="notice" id="calcResult">Ingresa el costo del producto para calcular el precio ideal, comisión y ROI.</div>
+    </div>
+  </section>
+
+  <!-- ESTUDIO -->
+  <section class="page" id="estudio">
+    <div class="grid two">
+      <div>
+        <div class="sectionhead" style="margin-top:0">
+          <h2>Organizador escolar</h2>
+          <span class="pill" id="taskCount">0 pendientes</span>
+        </div>
+        <div class="card">
+          <form id="taskForm">
+            <div class="formgrid">
+              <div class="field">
+                <label>Tarea, examen o entrega</label>
+                <input id="taskTitle" maxlength="90" placeholder="Ej. Ensayo de Historia" required>
+              </div>
+              <div class="field">
+                <label>Materia</label>
+                <input id="taskSubject" maxlength="50" placeholder="Ej. Historia" required>
+              </div>
+              <div class="field">
+                <label>Fecha de entrega</label>
+                <input id="taskDue" type="date" required>
+              </div>
+              <div class="field">
+                <label>Prioridad</label>
+                <select id="taskPriority">
+                  <option value="Alta">Alta</option>
+                  <option value="Media" selected>Media</option>
+                  <option value="Baja">Baja</option>
+                </select>
+              </div>
+            </div>
+            <button class="primary">＋ Añadir tarea</button>
+          </form>
+        </div>
+
+        <div class="sectionhead">
+          <h2>Lista de entregas</h2>
+          <select id="taskFilter" style="width:auto;padding:8px 11px">
+            <option value="pending">Pendientes</option>
+            <option value="all">Todas</option>
+            <option value="done">Completadas</option>
+          </select>
+        </div>
+        <div class="card" id="taskList"></div>
+      </div>
+
+      <div>
+        <div class="sectionhead" style="margin-top:0">
+          <h2>Temporizador Pomodoro</h2>
+          <span class="pill green" id="pomoSessions">0 sesiones hoy</span>
+        </div>
+        <div class="card">
+          <div class="actions" style="justify-content:center">
+            <button class="ghost small" data-pomo="25" id="pomo25">25m Enfoque</button>
+            <button class="ghost small" data-pomo="5" id="pomo5">5m Pausa</button>
+            <button class="ghost small" data-pomo="15" id="pomo15">15m Descanso</button>
+          </div>
+          <div class="pomo-ring">
+            <div class="label" id="pomoLabel">Modo Enfoque Profundo</div>
+            <div class="pomo-time" id="pomoDisplay">25:00</div>
+          </div>
+          <div class="actions" style="justify-content:center">
+            <button class="primary" id="pomoStart">▶ Iniciar</button>
+            <button class="ghost" id="pomoPause">❚❚ Pausar</button>
+            <button class="ghost" id="pomoReset">↺ Reiniciar</button>
+          </div>
+        </div>
+
+        <div class="sectionhead">
+          <h2>Notas rápidas &amp; Pedidos</h2>
+          <span class="pill olive">Auto-guardado</span>
+        </div>
+        <div class="card">
+          <div class="field">
+            <label>Apuntes de clase, lista de pedidos o proveedores</label>
+            <textarea id="quickNotes" rows="6" placeholder="Ej. Comprar 5 fundas iPhone 13, entregar tarea de cálculo el viernes..."></textarea>
+          </div>
+          <div class="actions" style="justify-content:space-between">
+            <span class="sub" id="notesStatus">Sincronizado localmente</span>
+            <button class="ghost small" id="clearNotesBtn">Limpiar notas</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METAS -->
+  <section class="page" id="metas">
+    <div class="sectionhead"><h2>Metas de ahorro e inversión</h2></div>
+    <div class="card">
+      <form id="goalForm">
+        <div class="formgrid">
+          <div class="field">
+            <label>Objetivo</label>
+            <input id="gName" maxlength="60" placeholder="Ej. Capital para lote de mercancía / Laptop" required>
+          </div>
+          <div class="field">
+            <label>Monto meta (MXN)</label>
+            <input id="gTarget" type="number" min=".01" step=".01" placeholder="0.00" required>
+          </div>
+        </div>
+        <button class="primary">＋ Crear meta</button>
+      </form>
+    </div>
+    <div class="sectionhead"><h2>Progreso de objetivos</h2></div>
+    <div class="grid two-eq" id="goalList"></div>
+  </section>
+
+  <!-- HERRAMIENTAS (Solo Calculadora Inteligente) -->
+  <section class="page" id="herramientas">
+    <div class="sectionhead">
+      <h2>Calculadora de precisión</h2>
+      <span class="pill">Teclado activo · Historial</span>
+    </div>
+
+    <div style="max-width:520px;margin:0 auto">
+      <div class="card">
+        <div class="sectionhead" style="margin:0 0 12px">
+          <h3>Calculadora inteligente</h3>
+          <span class="pill olive">Sincronizada</span>
+        </div>
+        <div class="calc-screen">
+          <div class="calc-expr-sub" id="calcSubDisplay">Listo</div>
+          <input id="basicDisplay" class="calc-input" type="text" value="0" aria-label="Pantalla de calculadora" readonly>
+        </div>
+        <div class="calc-grid" id="calculatorKeys">
+          <button type="button" class="fn" data-key="clear">AC</button>
+          <button type="button" class="fn" data-key="back">⌫</button>
+          <button type="button" class="fn" data-key="%">%</button>
+          <button type="button" class="op" data-key="/">÷</button>
+
+          <button type="button" data-key="7">7</button>
+          <button type="button" data-key="8">8</button>
+          <button type="button" data-key="9">9</button>
+          <button type="button" class="op" data-key="*">×</button>
+
+          <button type="button" data-key="4">4</button>
+          <button type="button" data-key="5">5</button>
+          <button type="button" data-key="6">6</button>
+          <button type="button" class="op" data-key="-">−</button>
+
+          <button type="button" data-key="1">1</button>
+          <button type="button" data-key="2">2</button>
+          <button type="button" data-key="3">3</button>
+          <button type="button" class="op" data-key="+">+</button>
+
+          <button type="button" class="fn" data-key="sign">±</button>
+          <button type="button" data-key="0">0</button>
+          <button type="button" data-key=".">.</button>
+          <button type="button" class="eq" data-key="equals">=</button>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button type="button" class="ghost small" data-key="(">(</button>
+          <button type="button" class="ghost small" data-key=")">)</button>
+          <button type="button" class="ghost small" id="copyCalcRes">Copiar resultado</button>
+        </div>
+        <div class="calc-history" id="calcHistory"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANÁLISIS -->
+  <section class="page" id="analisis">
+    <div class="sectionhead">
+      <h2>Análisis financiero histórico</h2>
+      <span class="pill">Consolidado</span>
+    </div>
+    <div class="grid two-eq">
+      <div class="card">
+        <h3 style="margin-top:0">Distribución por categoría</h3>
+        <div id="categoryStats"></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Indicadores clave</h3>
+        <div class="row"><span class="muted">Total de movimientos</span><b class="num" id="totalTx">0</b></div>
+        <div class="row"><span class="muted">Ingresos históricos</span><b class="positive num" id="allIncome">$0.00</b></div>
+        <div class="row"><span class="muted">Gastos históricos</span><b class="negative num" id="allExpense">$0.00</b></div>
+        <div class="row"><span class="muted">Balance neto</span><b class="num" id="allNet">$0.00</b></div>
+        <div class="row"><span class="muted">Ganancia bruta acumulada en ventas</span><b class="gold num" id="allProfit">$0.00</b></div>
+      </div>
+    </div>
+
+    <div class="sectionhead"><h2>Respaldo y portabilidad de datos</h2></div>
+    <div class="card">
+      <p class="muted" style="margin-top:0">Tus datos viven 100% privados en este dispositivo. Exporta respaldos periódicamente para conservar tu historial intacto.</p>
+      <div class="actions">
+        <button class="primary" id="exportBtn">↓ Exportar respaldo JSON</button>
+        <button class="ghost" id="csvBtn">↓ Descargar finanzas CSV</button>
+        <label class="ghost small" style="display:inline-flex;align-items:center;cursor:pointer;margin:0;padding:10px 14px">
+          ↑ Importar JSON <input type="file" id="importFile" accept=".json,application/json" hidden>
+        </label>
+        <button class="danger small" id="clearBtn">Restablecer todo</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- BOTÓN FLOTANTE DE CALCULADORA RÁPIDA -->
+<button class="fab-calc" id="fabCalcBtn" title="Calculadora rápida" aria-label="Abrir calculadora rápida">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="2" width="16" height="20" rx="2"/>
+    <line x1="8" y1="6" x2="16" y2="6"/>
+    <line x1="16" y1="14" x2="16" y2="18"/>
+    <path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/>
+    <path d="M12 14h.01"/><path d="M8 14h.01"/>
+    <path d="M12 18h.01"/><path d="M8 18h.01"/>
+  </svg>
+</button>
+
+<!-- BARRA INFERIOR -->
+<div class="bottom">
+  <button class="main-cta" id="quickAdd">＋ Registrar movimiento rápido</button>
+</div>
+
+<!-- MODAL EDITAR STOCK -->
+<dialog id="editDialog">
+  <button class="close ghost small" id="closeDialog">Cerrar</button>
+  <h3 style="margin-top:0">Ajustar existencias</h3>
+  <p class="muted" id="editProductName"></p>
+  <label>Unidades disponibles</label>
+  <input id="editQty" type="number" min="0" step="1">
+  <div class="actions" style="margin-top:14px">
+    <button class="primary" id="saveQty">Guardar cambios</button>
+  </div>
+</dialog>
+
+<!-- MODAL CALCULADORA FLOTANTE -->
+<dialog id="calcDialog">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0;font-family:'Playfair Display',serif">Calculadora rápida</h3>
+    <button class="ghost small" id="closeCalcDialog">Cerrar</button>
+  </div>
+  <div class="calc-screen">
+    <div class="calc-expr-sub" id="floatSubDisplay">Listo</div>
+    <input id="floatDisplay" class="calc-input" type="text" value="0" readonly>
+  </div>
+  <div class="calc-grid" id="floatCalcKeys">
+    <button type="button" class="fn" data-key="clear">AC</button>
+    <button type="button" class="fn" data-key="back">⌫</button>
+    <button type="button" class="fn" data-key="%">%</button>
+    <button type="button" class="op" data-key="/">÷</button>
+
+    <button type="button" data-key="7">7</button>
+    <button type="button" data-key="8">8</button>
+    <button type="button" data-key="9">9</button>
+    <button type="button" class="op" data-key="*">×</button>
+
+    <button type="button" data-key="4">4</button>
+    <button type="button" data-key="5">5</button>
+    <button type="button" data-key="6">6</button>
+    <button type="button" class="op" data-key="-">−</button>
+
+    <button type="button" data-key="1">1</button>
+    <button type="button" data-key="2">2</button>
+    <button type="button" data-key="3">3</button>
+    <button type="button" class="op" data-key="+">+</button>
+
+    <button type="button" class="fn" data-key="sign">±</button>
+    <button type="button" data-key="0">0</button>
+    <button type="button" data-key=".">.</button>
+    <button type="button" class="eq" data-key="equals">=</button>
+  </div>
+  <div class="actions" style="margin-top:12px;justify-content:space-between">
+    <button type="button" class="ghost small" id="copyFloatRes">Copiar resultado</button>
+    <span class="sub" id="floatCopyMsg"></span>
+  </div>
+</dialog>
+
+<!-- MODAL CONFIRMACIÓN / MENSAJES SIN ALERT() -->
+<dialog id="msgDialog">
+  <h3 id="msgTitle" style="margin-top:0;font-family:'Playfair Display',serif">Aviso</h3>
+  <p id="msgBody" class="muted" style="line-height:1.55"></p>
+  <div class="actions" id="msgActions" style="margin-top:16px;justify-content:flex-end"></div>
+</dialog>
+
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const KEY = 'cash_manager_v3';
+
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const blank = () => ({
+  transactions: [],
+  products: [],
+  goals: [],
+  tasks: [],
+  sales: [],
+  receivables: [],
+  notes: ''
+});
+
+function load() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
+    const base = blank();
+    return {
+      transactions: Array.isArray(raw.transactions) ? raw.transactions : base.transactions,
+      products: Array.isArray(raw.products) ? raw.products : base.products,
+      goals: Array.isArray(raw.goals) ? raw.goals : base.goals,
+      tasks: Array.isArray(raw.tasks) ? raw.tasks : base.tasks,
+      sales: Array.isArray(raw.sales) ? raw.sales : base.sales,
+      receivables: Array.isArray(raw.receivables) ? raw.receivables : base.receivables,
+      notes: typeof raw.notes === 'string' ? raw.notes : ''
+    };
+  } catch {
+    return blank();
+  }
+}
+
+let data = load();
+let editingId = null;
+
+const money = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(n) || 0);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
+const sum = (arr, type) => arr.filter(x => x.type === type).reduce((a, x) => a + Number(x.amount || 0), 0);
+const month = () => today().slice(0, 7);
+
+/* Diálogo elegante no-bloqueante (reemplazo de alert/confirm) */
+function showNotice(text, title = 'NOIR') {
+  return new Promise(resolve => {
+    $('msgTitle').textContent = title;
+    $('msgBody').textContent = text;
+    $('msgActions').innerHTML = `<button class="primary small" id="msgOk">Entendido</button>`;
+    $('msgDialog').showModal();
+    $('msgOk').onclick = () => { $('msgDialog').close(); resolve(true); };
+  });
+}
+
+function showConfirm(text, title = 'Confirmar acción') {
+  return new Promise(resolve => {
+    $('msgTitle').textContent = title;
+    $('msgBody').textContent = text;
+    $('msgActions').innerHTML = `
+      <button class="ghost small" id="msgCancel">Cancelar</button>
+      <button class="primary small" id="msgYes">Continuar</button>
+    `;
+    $('msgDialog').showModal();
+    $('msgCancel').onclick = () => { $('msgDialog').close(); resolve(false); };
+    $('msgYes').onclick = () => { $('msgDialog').close(); resolve(true); };
+  });
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    render();
+  } catch {
+    showNotice('No se pudo guardar en el navegador. Exporta un respaldo JSON y libera espacio.', 'Error de almacenamiento');
+  }
+}
+
+/* Navegación */
+function go(id) {
+  document.querySelectorAll('.page').forEach(x => x.classList.toggle('active', x.id === id));
+  document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('active', x.dataset.tab === id));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('[data-tab]').forEach(b => (b.onclick = () => go(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach(b => (b.onclick = () => go(b.dataset.go)));
+
+$('quickAdd').onclick = () => {
+  go('movimientos');
+  $('txTitle').focus();
+};
+
+$('txDate').value = $('saleDate').value = today();
+
+/* Movimientos */
+$('txForm').onsubmit = e => {
+  e.preventDefault();
+  const amount = +$('txAmount').value;
+  const title = $('txTitle').value.trim();
+  if (!(amount > 0) || !title) return showNotice('Verifica que el importe sea mayor a 0 y escribe un concepto.');
+  data.transactions.unshift({
+    id: uid(),
+    type: $('txType').value,
+    amount,
+    title,
+    category: $('txCategory').value,
+    date: $('txDate').value,
+    pay: $('txPay').value,
+    note: $('txNote').value.trim()
+  });
+  e.target.reset();
+  $('txDate').value = today();
+  save();
+};
+
+$('filterType').onchange = renderTransactions;
+$('txSearch').oninput = renderTransactions;
+
+function renderTransactions() {
+  const f = $('filterType').value;
+  const q = $('txSearch').value.toLowerCase();
+  const a = data.transactions.filter(
+    t => (f === 'all' || t.type === f) && [t.title, t.category, t.date, t.note].join(' ').toLowerCase().includes(q)
+  );
+  $('txList').innerHTML = a.length
+    ? a
+        .map(
+          t => `
+      <div class="row">
+        <div style="min-width:0">
+          <b>${esc(t.title)}</b>
+          <div class="sub">${esc(t.date)} · ${esc(t.category || 'Otro')} · ${esc(t.pay || '')}${t.note ? ' · ' + esc(t.note) : ''}</div>
+        </div>
+        <div style="text-align:right;white-space:nowrap">
+          <b class="num ${t.type === 'income' ? 'positive' : 'negative'}">${t.type === 'income' ? '+' : '−'}${money(t.amount)}</b><br>
+          ${t.saleId ? '<span class="pill">Venta</span>' : `<button class="danger small" data-rmtx="${esc(t.id)}">Eliminar</button>`}
+        </div>
+      </div>`
+        )
+        .join('')
+    : '<div class="empty">No hay movimientos registrados con este filtro.</div>';
+}
+
+$('txList').onclick = async e => {
+  const b = e.target.closest('[data-rmtx]');
+  if (b && (await showConfirm('¿Eliminar este movimiento financiero?'))) {
+    data.transactions = data.transactions.filter(t => t.id !== b.dataset.rmtx);
+    save();
+  }
+};
+
+/* Productos e Inventario */
+$('productForm').onsubmit = e => {
+  e.preventDefault();
+  const p = {
+    id: uid(),
+    name: $('pName').value.trim(),
+    qty: +$('pQty').value,
+    cost: +$('pCost').value,
+    price: +$('pPrice').value,
+    min: +$('pMin').value
+  };
+  if (!p.name || !Number.isInteger(p.qty) || p.qty < 0 || p.cost < 0 || p.price < 0) {
+    return showNotice('Revisa que las cantidades y precios sean válidos.');
+  }
+  data.products.push(p);
+  e.target.reset();
+  $('pMin').value = 2;
+  save();
+};
+
+function renderProducts() {
+  const totalCapital = data.products.reduce((a, p) => a + (+p.qty || 0) * (+p.cost || 0), 0);
+  const totalRetail = data.products.reduce((a, p) => a + (+p.qty || 0) * (+p.price || 0), 0);
+  const lowCount = data.products.filter(p => (+p.qty || 0) <= Number(p.min ?? 2)).length;
+
+  $('invCapital').textContent = money(totalCapital);
+  $('invRetail').textContent = money(totalRetail);
+  $('invPotential').textContent = money(totalRetail - totalCapital);
+  $('invLowCount').textContent = lowCount;
+
+  $('productList').innerHTML = data.products.length
+    ? data.products
+        .map(p => {
+          const margin = p.price - p.cost;
+          const roi = p.cost > 0 ? ((margin / p.cost) * 100).toFixed(0) : '100';
+          return `
+        <div class="row">
+          <div style="min-width:0">
+            <b>${esc(p.name)}</b>
+            <div class="sub num">${p.qty} uds · Costo ${money(p.cost)} · Venta ${money(p.price)}</div>
+            <div class="sub num ${margin >= 0 ? 'positive' : 'negative'}">
+              Utilidad: ${money(margin)} (${roi}% ROI)
+              ${p.qty <= Number(p.min ?? 2) ? ' · <span class="pill red">Stock bajo</span>' : ''}
+            </div>
+          </div>
+          <div class="actions">
+            <button class="ghost small" data-stock="${esc(p.id)}">Stock</button>
+            <button class="danger small" data-delprod="${esc(p.id)}">×</button>
+          </div>
+        </div>`;
+        })
+        .join('')
+    : '<div class="empty">Aún no tienes productos en tu inventario.</div>';
+
+  $('saleProduct').innerHTML =
+    '<option value="">Selecciona un producto</option>' +
+    data.products.map(p => `<option value="${esc(p.id)}">${esc(p.name)} — ${p.qty} disp. (${money(p.price)})</option>`).join('');
+}
+
+$('productList').onclick = async e => {
+  const a = e.target.closest('[data-stock]');
+  const b = e.target.closest('[data-delprod]');
+  if (a) {
+    const p = data.products.find(x => x.id === a.dataset.stock);
+    if (p) {
+      editingId = p.id;
+      $('editProductName').textContent = p.name;
+      $('editQty').value = p.qty;
+      $('editDialog').showModal();
+    }
+  }
+  if (b && (await showConfirm('¿Eliminar este producto del inventario?'))) {
+    data.products = data.products.filter(x => x.id !== b.dataset.delprod);
+    save();
+  }
+};
+
+$('closeDialog').onclick = () => $('editDialog').close();
+$('saveQty').onclick = () => {
+  const p = data.products.find(x => x.id === editingId);
+  const q = +$('editQty').value;
+  if (p && Number.isInteger(q) && q >= 0) {
+    p.qty = q;
+    $('editDialog').close();
+    save();
+  } else {
+    showNotice('Ingresa un número entero válido mayor o igual a 0.');
+  }
+};
+
+/* Ventas */
+function previewSale() {
+  const p = data.products.find(x => x.id === $('saleProduct').value);
+  const q = +$('saleQty').value;
+  const price = +$('salePrice').value;
+  if (!p) {
+    $('salePreview').textContent = 'Selecciona un producto para calcular la ganancia neta.';
+    return;
+  }
+  const total = q * price;
+  const profit = q * (price - p.cost);
+  $('salePreview').innerHTML = `Total venta: <b class="num">${money(total)}</b> · Ganancia neta: <b class="num ${
+    profit >= 0 ? 'positive' : 'negative'
+  }">${money(profit)}</b> · Quedarán: <b>${Math.max(0, p.qty - q)}</b> uds.`;
+}
+
+$('saleProduct').onchange = () => {
+  const p = data.products.find(x => x.id === $('saleProduct').value);
+  if (p) $('salePrice').value = p.price;
+  previewSale();
+};
+$('saleQty').oninput = $('salePrice').oninput = previewSale;
+
+$('saleForm').onsubmit = e => {
+  e.preventDefault();
+  const p = data.products.find(x => x.id === $('saleProduct').value);
+  const q = +$('saleQty').value;
+  const price = +$('salePrice').value;
+  if (!p) return showNotice('Selecciona un producto antes de confirmar.');
+  if (!Number.isInteger(q) || q < 1 || q > p.qty) return showNotice(`Stock insuficiente. Disponibles: ${p.qty} unidades.`);
+  if (price < 0) return showNotice('El precio no puede ser negativo.');
+
+  const total = q * price;
+  const cost = q * p.cost;
+  const profit = total - cost;
+  const id = uid();
+  const date = $('saleDate').value;
+
+  const sale = {
+    id,
+    productId: p.id,
+    product: p.name,
+    qty: q,
+    price,
+    total,
+    cost,
+    profit,
+    date,
+    pay: $('salePay').value,
+    customer: $('saleCustomer').value.trim()
+  };
+
+  data.sales.unshift(sale);
+  p.qty -= q;
+  data.transactions.unshift({
+    id: uid(),
+    saleId: id,
+    type: 'income',
+    amount: total,
+    title: `Venta: ${p.name} × ${q}`,
+    category: 'Ventas',
+    date,
+    pay: sale.pay,
+    note: sale.customer ? `Cliente: ${sale.customer}` : ''
+  });
+
+  e.target.reset();
+  $('saleDate').value = today();
+  $('saleQty').value = 1;
+  previewSale();
+  save();
+};
+
+function renderSales() {
+  $('salesList').innerHTML = data.sales.length
+    ? data.sales
+        .map(
+          s => `
+      <div class="row">
+        <div>
+          <b>${esc(s.product)} × ${s.qty}</b>
+          <div class="sub">${esc(s.date)} · ${esc(s.pay)}${s.customer ? ' · ' + esc(s.customer) : ''}</div>
+          <div class="sub positive num">Ganancia neta: ${money(s.profit)}</div>
+        </div>
+        <div style="text-align:right">
+          <b class="num">${money(s.total)}</b><br>
+          <button class="danger small" data-rmsale="${esc(s.id)}">Anular venta</button>
+        </div>
+      </div>`
+        )
+        .join('')
+    : '<div class="empty">Todavía no registras ventas.</div>';
+}
+
+$('salesList').onclick = async e => {
+  const b = e.target.closest('[data-rmsale]');
+  if (!b) return;
+  const s = data.sales.find(x => x.id === b.dataset.rmsale);
+  if (!s || !(await showConfirm('Se anulará la venta, se quitará el ingreso y se devolverán las piezas al inventario. ¿Continuar?'))) return;
+  const p = data.products.find(x => x.id === s.productId);
+  if (p) p.qty += s.qty;
+  data.transactions = data.transactions.filter(t => t.saleId !== s.id);
+  data.sales = data.sales.filter(x => x.id !== s.id);
+  save();
+};
+
+/* Apartados / Cuentas por cobrar */
+$('recForm').onsubmit = e => {
+  e.preventDefault();
+  const client = $('recClient').value.trim();
+  const concept = $('recConcept').value.trim();
+  const total = +$('recTotal').value;
+  const paid = +$('recPaid').value || 0;
+  if (!client || !concept || total <= 0 || paid < 0 || paid >= total) {
+    return showNotice('Verifica los montos: el anticipo debe ser menor al total.');
+  }
+  data.receivables.unshift({
+    id: uid(),
+    client,
+    concept,
+    total,
+    paid,
+    date: today()
+  });
+  if (paid > 0) {
+    data.transactions.unshift({
+      id: uid(),
+      type: 'income',
+      amount: paid,
+      title: `Anticipo: ${concept} (${client})`,
+      category: 'Ventas',
+      date: today(),
+      pay: 'Efectivo',
+      note: 'Abono inicial de apartado'
+    });
+  }
+  e.target.reset();
+  $('recPaid').value = 0;
+  save();
+};
+
+function renderReceivables() {
+  const pendingTotal = data.receivables.reduce((a, r) => a + Math.max(0, r.total - r.paid), 0);
+  $('recBadge').textContent = money(pendingTotal);
+  $('receivableTotal').textContent = money(pendingTotal);
+  $('receivableCount').textContent = data.receivables.length;
+
+  $('recList').innerHTML = data.receivables.length
+    ? data.receivables
+        .map(r => {
+          const rest = Math.max(0, r.total - r.paid);
+          return `
+        <div class="row">
+          <div style="min-width:0">
+            <b>${esc(r.client)}</b> · <span class="muted">${esc(r.concept)}</span>
+            <div class="sub num">Resta: <b class="blue">${money(rest)}</b> de ${money(r.total)}</div>
+          </div>
+          <div class="actions">
+            <button class="success-btn small" data-payrec="${esc(r.id)}">Liquidar</button>
+            <button class="danger small" data-delrec="${esc(r.id)}">×</button>
+          </div>
+        </div>`;
+        })
+        .join('')
+    : '<div class="sub" style="text-align:center;padding:8px 0">Sin cuentas pendientes por cobrar.</div>';
+}
+
+$('recList').onclick = async e => {
+  const payBtn = e.target.closest('[data-payrec]');
+  const delBtn = e.target.closest('[data-delrec]');
+  if (payBtn) {
+    const r = data.receivables.find(x => x.id === payBtn.dataset.payrec);
+    if (!r) return;
+    const rest = Math.max(0, r.total - r.paid);
+    if (await showConfirm(`¿Liquidar el saldo restante de ${money(rest)} de ${r.client} y sumarlo a tus ingresos?`)) {
+      if (rest > 0) {
+        data.transactions.unshift({
+          id: uid(),
+          type: 'income',
+          amount: rest,
+          title: `Liquidación: ${r.concept} (${r.client})`,
+          category: 'Ventas',
+          date: today(),
+          pay: 'Efectivo',
+          note: 'Saldo de apartado cobrado'
+        });
+      }
+      data.receivables = data.receivables.filter(x => x.id !== r.id);
+      save();
+    }
+  }
+  if (delBtn && (await showConfirm('¿Eliminar este registro sin sumar ingreso?'))) {
+    data.receivables = data.receivables.filter(x => x.id !== delBtn.dataset.delrec);
+    save();
+  }
+};
+
+/* Calculadora Avanzada de Precios */
+function updateAdvancedPriceCalc() {
+  const cost = +$('calcCost').value;
+  const extra = +$('calcExtra').value || 0;
+  const feePct = +$('calcFee').value || 0;
+  const marginPct = +$('calcMargin').value || 0;
+
+  if ($('calcCost').value === '' || cost < 0) {
+    $('calcResult').textContent = 'Ingresa el costo del producto para calcular el precio ideal, comisión y ROI.';
+    return;
+  }
+
+  const baseCost = cost + extra;
+  const desiredProfit = baseCost * (marginPct / 100);
+  const feeFactor = 1 - feePct / 100;
+  const suggestedPrice = feeFactor > 0 ? (baseCost + desiredProfit) / feeFactor : baseCost + desiredProfit;
+  const platformFeeAmount = suggestedPrice * (feePct / 100);
+  const netProfit = suggestedPrice - platformFeeAmount - baseCost;
+  const roi = baseCost > 0 ? (netProfit / baseCost) * 100 : 0;
+
+  $('calcResult').innerHTML = `
+    Precio sugerido al público: <b class="gold num" style="font-size:16px">${money(suggestedPrice)}</b><br>
+    <span class="sub num">Costo total: ${money(baseCost)} · Comisión plataforma: ${money(platformFeeAmount)} · Ganancia neta: <b class="positive">${money(netProfit)}</b> (ROI ${roi.toFixed(1)}%)</span>
+  `;
+}
+['calcCost', 'calcExtra', 'calcFee', 'calcMargin'].forEach(id => ($(id).oninput = $(id).onchange = updateAdvancedPriceCalc));
+
+/* Tareas Escolares */
+$('taskForm').onsubmit = e => {
+  e.preventDefault();
+  data.tasks.push({
+    id: uid(),
+    title: $('taskTitle').value.trim(),
+    subject: $('taskSubject').value.trim(),
+    due: $('taskDue').value,
+    priority: $('taskPriority').value,
+    done: false
+  });
+  e.target.reset();
+  save();
+};
+
+$('taskFilter').onchange = renderTasks;
+
+function renderTasks() {
+  const f = $('taskFilter').value;
+  const arr = data.tasks
+    .filter(t => f === 'all' || (f === 'done' ? t.done : !t.done))
+    .sort((a, b) => a.due.localeCompare(b.due));
+  const pending = data.tasks.filter(t => !t.done).length;
+  $('taskCount').textContent = pending + ' pendientes';
+
+  $('taskList').innerHTML = arr.length
+    ? arr
+        .map(
+          t => `
+      <div class="row task ${t.done ? 'done' : ''} ${!t.done && t.due < today() ? 'overdue' : ''}">
+        <div style="min-width:0">
+          <b>${esc(t.title)}</b>
+          <div class="sub">${esc(t.subject)} · Entrega: ${esc(t.due)} · Prioridad ${esc(t.priority)}</div>
+          ${!t.done && t.due < today() ? '<span class="pill red" style="margin-top:4px">Vencida</span>' : ''}
+        </div>
+        <div class="actions">
+          <button class="ghost small" data-donetask="${esc(t.id)}">${t.done ? 'Reabrir' : 'Listo'}</button>
+          <button class="danger small" data-deltask="${esc(t.id)}">×</button>
+        </div>
+      </div>`
+        )
+        .join('')
+    : '<div class="empty">No hay tareas en esta vista.</div>';
+}
+
+$('taskList').onclick = async e => {
+  const d = e.target.closest('[data-donetask]');
+  const r = e.target.closest('[data-deltask]');
+  if (d) {
+    const t = data.tasks.find(x => x.id === d.dataset.donetask);
+    if (t) t.done = !t.done;
+    save();
+  }
+  if (r && (await showConfirm('¿Eliminar esta tarea?'))) {
+    data.tasks = data.tasks.filter(x => x.id !== r.dataset.deltask);
+    save();
+  }
+};
+
+/* Pomodoro */
+let pomoSeconds = 25 * 60;
+let pomoDefault = 25 * 60;
+let pomoTimer = null;
+let sessionsCompleted = 0;
+
+function renderPomo() {
+  const m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+  const s = String(pomoSeconds % 60).padStart(2, '0');
+  $('pomoDisplay').textContent = `${m}:${s}`;
+}
+
+document.querySelectorAll('[data-pomo]').forEach(btn => {
+  btn.onclick = () => {
+    clearInterval(pomoTimer);
+    pomoTimer = null;
+    const mins = +btn.dataset.pomo;
+    pomoDefault = mins * 60;
+    pomoSeconds = pomoDefault;
+    $('pomoLabel').textContent = mins === 25 ? 'Modo Enfoque Profundo' : mins === 5 ? 'Pausa Corta' : 'Descanso Largo';
+    renderPomo();
+  };
+});
+
+$('pomoStart').onclick = () => {
+  if (pomoTimer) return;
+  pomoTimer = setInterval(() => {
+    if (pomoSeconds > 0) {
+      pomoSeconds--;
+      renderPomo();
+    } else {
+      clearInterval(pomoTimer);
+      pomoTimer = null;
+      if (pomoDefault === 25 * 60) {
+        sessionsCompleted++;
+        $('pomoSessions').textContent = `${sessionsCompleted} sesiones hoy`;
+      }
+      showNotice('¡Tiempo completado! Toma un respiro o inicia el siguiente bloque.', 'Pomodoro NOIR');
+    }
+  }, 1000);
+};
+
+$('pomoPause').onclick = () => {
+  clearInterval(pomoTimer);
+  pomoTimer = null;
+};
+
+$('pomoReset').onclick = () => {
+  clearInterval(pomoTimer);
+  pomoTimer = null;
+  pomoSeconds = pomoDefault;
+  renderPomo();
+};
+
+/* Notas rápidas auto-guardadas */
+$('quickNotes').value = data.notes || '';
+let notesTimer = null;
+$('quickNotes').oninput = () => {
+  $('notesStatus').textContent = 'Guardando...';
+  clearTimeout(notesTimer);
+  notesTimer = setTimeout(() => {
+    data.notes = $('quickNotes').value;
+    localStorage.setItem(KEY, JSON.stringify(data));
+    $('notesStatus').textContent = 'Sincronizado localmente';
+  }, 300);
+};
+$('clearNotesBtn').onclick = async () => {
+  if (await showConfirm('¿Borrar el contenido del bloc de notas?')) {
+    $('quickNotes').value = '';
+    data.notes = '';
+    save();
+  }
+};
+
+/* Metas */
+$('goalForm').onsubmit = e => {
+  e.preventDefault();
+  const name = $('gName').value.trim();
+  const target = +$('gTarget').value;
+  if (name && target > 0) {
+    data.goals.push({ id: uid(), name, target, saved: 0 });
+    e.target.reset();
+    save();
+  }
+};
+
+function renderGoals() {
+  $('goalList').innerHTML = data.goals.length
+    ? data.goals
+        .map(g => {
+          const pct = Math.min(100, ((g.saved || 0) / g.target) * 100);
+          return `
+        <div class="card">
+          <div class="row" style="padding-top:0">
+            <b>${esc(g.name)}</b>
+            <button class="danger small" data-delgoal="${esc(g.id)}">Eliminar</button>
+          </div>
+          <div class="row">
+            <span class="muted num">${money(g.saved)} de ${money(g.target)}</span>
+            <b class="gold num">${pct.toFixed(0)}%</b>
+          </div>
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <div class="actions" style="margin-top:13px">
+            <input type="number" min=".01" step=".01" placeholder="Monto a abonar" data-goalinput="${esc(g.id)}" style="max-width:165px">
+            <button class="primary small" data-addgoal="${esc(g.id)}">＋ Abonar</button>
+          </div>
+        </div>`;
+        })
+        .join('')
+    : '<div class="card empty" style="grid-column:1/-1">Crea una meta para impulsar tu ahorro o capital de mercancía.</div>';
+}
+
+$('goalList').onclick = async e => {
+  const d = e.target.closest('[data-delgoal]');
+  const a = e.target.closest('[data-addgoal]');
+  if (d && (await showConfirm('¿Eliminar esta meta de ahorro?'))) {
+    data.goals = data.goals.filter(x => x.id !== d.dataset.delgoal);
+    save();
+  }
+  if (a) {
+    const g = data.goals.find(x => x.id === a.dataset.addgoal);
+    const v = +$('goalList').querySelector(`[data-goalinput="${CSS.escape(a.dataset.addgoal)}"]`).value;
+    if (g && v > 0) {
+      g.saved = (g.saved || 0) + v;
+      save();
+    }
+  }
+};
+
+/* Análisis */
+function renderAnalysis() {
+  const inc = sum(data.transactions, 'income');
+  const exp = sum(data.transactions, 'expense');
+  const profit = data.sales.reduce((a, s) => a + Number(s.profit || 0), 0);
+  $('totalTx').textContent = data.transactions.length;
+  $('allIncome').textContent = money(inc);
+  $('allExpense').textContent = money(exp);
+  $('allNet').textContent = money(inc - exp);
+  $('allProfit').textContent = money(profit);
+
+  const cats = {};
+  data.transactions.forEach(t => {
+    const k = (t.category || 'Otro') + ' · ' + (t.type === 'income' ? 'Ingreso' : 'Gasto');
+    cats[k] = (cats[k] || 0) + Number(t.amount || 0);
+  });
+  const a = Object.entries(cats).sort((x, y) => y[1] - x[1]);
+  const max = Math.max(1, ...a.map(x => x[1]));
+  $('categoryStats').innerHTML = a.length
+    ? a
+        .map(
+          ([k, v]) => `
+      <div class="progressline">
+        <div class="row" style="padding:0;border:0"><small>${esc(k)}</small><b class="num">${money(v)}</b></div>
+        <div class="bar"><i style="width:${Math.max(2, (v / max) * 100)}%"></i></div>
+      </div>`
+        )
+        .join('')
+    : '<div class="empty">Registra movimientos para visualizar la distribución por categoría.</div>';
+}
+
+/* Render General */
+function render() {
+  const m = data.transactions.filter(t => (t.date || '').slice(0, 7) === month());
+  const inc = sum(m, 'income');
+  const exp = sum(m, 'expense');
+  const sales = data.sales.filter(s => (s.date || '').slice(0, 7) === month());
+  const profit = sales.reduce((a, s) => a + Number(s.profit || 0), 0);
+
+  $('balance').textContent = money(sum(data.transactions, 'income') - sum(data.transactions, 'expense'));
+  $('income').textContent = money(inc);
+  $('expense').textContent = money(exp);
+  $('profitMonth').textContent = money(profit);
+  $('monthLabel').textContent = new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+
+  $('recent').innerHTML =
+    data.transactions
+      .slice(0, 5)
+      .map(
+        t => `
+    <div class="row">
+      <div><b>${esc(t.title)}</b><div class="sub">${esc(t.date)} · ${esc(t.category || '')}</div></div>
+      <b class="num ${t.type === 'income' ? 'positive' : 'negative'}">${t.type === 'income' ? '+' : '−'}${money(t.amount)}</b>
+    </div>`
+      )
+      .join('') || '<div class="empty">Aún no hay movimientos registrados.</div>';
+
+  const stockCap = data.products.reduce((a, p) => a + (+p.qty || 0) * (+p.cost || 0), 0);
+  const stockRet = data.products.reduce((a, p) => a + (+p.qty || 0) * (+p.price || 0), 0);
+
+  $('salesCount').textContent = sales.length;
+  $('stockCount').textContent = data.products.reduce((a, p) => a + (+p.qty || 0), 0);
+  $('stockValue').textContent = money(stockCap);
+  $('stockPotential').textContent = money(stockRet - stockCap);
+
+  const tasks = data.tasks
+    .filter(t => !t.done)
+    .sort((a, b) => a.due.localeCompare(b.due))
+    .slice(0, 4);
+  $('upcoming').innerHTML = tasks.length
+    ? tasks
+        .map(
+          t => `
+      <div class="row">
+        <div><b>${esc(t.title)}</b><div class="sub">${esc(t.subject)} · ${esc(t.due)}</div></div>
+        <span class="pill ${t.due < today() ? 'red' : ''}">${t.due < today() ? 'Vencida' : t.priority}</span>
+      </div>`
+        )
+        .join('')
+    : '<div class="empty">Sin entregas pendientes.</div>';
+
+  renderTransactions();
+  renderProducts();
+  renderSales();
+  renderReceivables();
+  renderTasks();
+  renderGoals();
+  renderAnalysis();
+}
+
+/* Exportación / Importación */
+function download(name, content, type) {
+  const u = URL.createObjectURL(new Blob([content], { type }));
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(u), 1200);
+}
+
+function exportData() {
+  download('noir-respaldo-' + today() + '.json', JSON.stringify(data, null, 2), 'application/json');
+}
+
+$('exportBtn').onclick = $('backupTop').onclick = exportData;
+
+$('csvBtn').onclick = () => {
+  const rows = [
+    ['Fecha', 'Tipo', 'Concepto', 'Categoría', 'Importe', 'Forma de pago', 'Nota'],
+    ...data.transactions.map(t => [t.date, t.type, t.title, t.category, t.amount, t.pay, t.note])
+  ];
+  download(
+    'noir-finanzas.csv',
+    '\uFEFF' + rows.map(r => r.map(x => '"' + String(x ?? '').replace(/"/g, '""') + '"').join(',')).join('\n'),
+    'text/csv;charset=utf-8'
+  );
+};
+
+async function handleImport(fileInput) {
+  const f = fileInput.files[0];
+  if (!f) return;
+  try {
+    const x = JSON.parse(await f.text());
+    if (!x || !Array.isArray(x.transactions) || !Array.isArray(x.products) || !Array.isArray(x.goals)) throw 0;
+    if (await showConfirm('La importación reemplazará los datos actuales por los del respaldo. ¿Continuar?')) {
+      data = {
+        ...blank(),
+        ...x,
+        tasks: Array.isArray(x.tasks) ? x.tasks : [],
+        sales: Array.isArray(x.sales) ? x.sales : [],
+        receivables: Array.isArray(x.receivables) ? x.receivables : [],
+        notes: typeof x.notes === 'string' ? x.notes : ''
+      };
+      $('quickNotes').value = data.notes;
+      save();
+      showNotice('Respaldo restaurado exitosamente.');
+    }
+  } catch {
+    showNotice('El archivo seleccionado no es un respaldo JSON válido de NOIR.', 'Error de importación');
+  }
+  fileInput.value = '';
+}
+
+$('importFile').onchange = e => handleImport(e.target);
+$('importTop').onclick = () => $('importTopFile').click();
+$('importTopFile').onchange = e => handleImport(e.target);
+
+$('clearBtn').onclick = async () => {
+  if (await showConfirm('Esto eliminará todos los registros guardados en este navegador. ¿Deseas continuar?', 'Restablecer aplicación')) {
+    data = blank();
+    $('quickNotes').value = '';
+    save();
+  }
+};
+
+/* =========================================================
+   MOTOR DE CALCULADORA REPARADO Y SINCRONIZADO
+   ========================================================= */
+let calcExpr = '';
+let calcHistoryList = [];
+
+function evaluateMathExpression(raw) {
+  let expr = String(raw)
+    .replace(/×/g, '*')
+    .replace(/÷/g, '/')
+    .replace(/−/g, '-')
+    .replace(/\s+/g, '');
+
+  expr = expr.replace(/(\d+(?:\.\d+)?)%/g, '($1/100)');
+
+  if (!expr || !/^[0-9+\-*/().]+$/.test(expr)) {
+    throw new Error('Expresión inválida');
+  }
+  if (/[*/]{2,}/.test(expr) || /\.\./.test(expr)) {
+    throw new Error('Sintaxis inválida');
+  }
+
+  const result = Function('"use strict"; return (' + expr + ')')();
+  if (typeof result !== 'number' || !Number.isFinite(result)) {
+    throw new Error('Resultado indefinido');
+  }
+  return Math.round((result + Number.EPSILON) * 1e8) / 1e8;
+}
+
+function syncCalcDisplays(subText = null) {
+  const val = calcExpr || '0';
+  $('basicDisplay').value = val;
+  $('floatDisplay').value = val;
+  if (subText !== null) {
+    $('calcSubDisplay').textContent = subText;
+    $('floatSubDisplay').textContent = subText;
+  }
+}
+
+function renderCalcHistory() {
+  $('calcHistory').innerHTML = calcHistoryList.length
+    ? calcHistoryList
+        .map(
+          item => `
+      <div class="calc-hist-item" data-use-res="${esc(item.res)}" title="Clic para usar este resultado">
+        <span class="muted">${esc(item.expr)}</span>
+        <b class="gold calc-hist-res">= ${esc(item.res)}</b>
+      </div>`
+        )
+        .join('')
+    : '<div class="sub" style="text-align:center;padding:4px 0">Historial de operaciones vacío</div>';
+}
+
+$('calcHistory').onclick = e => {
+  const item = e.target.closest('[data-use-res]');
+  if (item) {
+    calcExpr = item.dataset.useRes;
+    syncCalcDisplays('Resultado recuperado');
+  }
+};
+
+function processCalcKey(k) {
+  if (k === 'clear') {
+    calcExpr = '';
+    syncCalcDisplays('Listo');
+    return;
+  }
+  if (k === 'back') {
+    calcExpr = calcExpr.slice(0, -1);
+    syncCalcDisplays();
+    return;
+  }
+  if (k === 'sign') {
+    if (!calcExpr) {
+      calcExpr = '-';
+    } else if (calcExpr.startsWith('-')) {
+      calcExpr = calcExpr.slice(1);
+    } else {
+      calcExpr = '-' + calcExpr;
+    }
+    syncCalcDisplays();
+    return;
+  }
+  if (k === 'equals') {
+    if (!calcExpr) return;
+    try {
+      const originalExpr = calcExpr;
+      const res = evaluateMathExpression(originalExpr);
+      calcHistoryList.unshift({ expr: originalExpr, res: String(res) });
+      if (calcHistoryList.length > 8) calcHistoryList.pop();
+      calcExpr = String(res);
+      syncCalcDisplays(originalExpr + ' =');
+      renderCalcHistory();
+    } catch {
+      syncCalcDisplays('Error de sintaxis');
+      $('basicDisplay').value = 'Error';
+      $('floatDisplay').value = 'Error';
+      calcExpr = '';
+    }
+    return;
+  }
+
+  const ops = ['+', '*', '/', '%'];
+  const lastChar = calcExpr.slice(-1);
+  if (ops.includes(k) && (calcExpr === '' || ops.includes(lastChar))) {
+    if (calcExpr !== '') {
+      calcExpr = calcExpr.slice(0, -1) + k;
+      syncCalcDisplays();
+    }
+    return;
+  }
+
+  calcExpr += k;
+  syncCalcDisplays();
+}
+
+$('calculatorKeys').onclick = e => {
+  const b = e.target.closest('[data-key]');
+  if (b) processCalcKey(b.dataset.key);
+};
+$('floatCalcKeys').onclick = e => {
+  const b = e.target.closest('[data-key]');
+  if (b) processCalcKey(b.dataset.key);
+};
+document.querySelectorAll('#herramientas [data-key]').forEach(b => {
+  if (!b.closest('#calculatorKeys')) {
+    b.onclick = () => processCalcKey(b.dataset.key);
+  }
+});
+
+document.addEventListener('keydown', e => {
+  const isFloatOpen = $('calcDialog').open;
+  const isToolsActive = $('herramientas').classList.contains('active');
+  const activeTag = document.activeElement?.tagName;
+  if (!isFloatOpen && !isToolsActive) return;
+  if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') {
+    if (document.activeElement.id !== 'basicDisplay' && document.activeElement.id !== 'floatDisplay') return;
+  }
+
+  if (/^[0-9+\-*/().%]$/.test(e.key)) {
+    e.preventDefault();
+    processCalcKey(e.key);
+  } else if (e.key === 'Enter' || e.key === '=') {
+    e.preventDefault();
+    processCalcKey('equals');
+  } else if (e.key === 'Backspace') {
+    e.preventDefault();
+    processCalcKey('back');
+  } else if (e.key === 'Escape' && !isFloatOpen) {
+    e.preventDefault();
+    processCalcKey('clear');
+  }
+});
+
+function copyTextFallback(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+  } catch {}
+  document.body.removeChild(ta);
+}
+
+$('copyCalcRes').onclick = () => {
+  copyTextFallback($('basicDisplay').value);
+  $('calcSubDisplay').textContent = 'Copiado al portapapeles';
+};
+$('copyFloatRes').onclick = () => {
+  copyTextFallback($('floatDisplay').value);
+  $('floatCopyMsg').textContent = '✓ Copiado';
+  setTimeout(() => ($('floatCopyMsg').textContent = ''), 1800);
+};
+
+$('fabCalcBtn').onclick = $('openCalcQuick').onclick = () => {
+  syncCalcDisplays();
+  $('calcDialog').showModal();
+};
+$('closeCalcDialog').onclick = () => $('calcDialog').close();
+
+renderCalcHistory();
+render();
+</script>
+</body>
+</html>
